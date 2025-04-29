@@ -147,7 +147,7 @@ void run_command(int argc, char *arg[], char *cmd) {
 
 void help(int argc, char *arg[]) {
   if (arg[0] == NULL) {
-    print_file("src/textfile/help_list.txt");
+    print_file("src/textfile/help_command.txt");
     return;
   }
   if (strcmp(arg[0], "list") == 0) {
