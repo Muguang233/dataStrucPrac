@@ -1,2 +1,2 @@
 # dataStrucPrac
-mini game to play around with data structure in c
+一个自娱自乐的数据结构练习项目
