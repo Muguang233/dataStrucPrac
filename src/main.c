@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "../include/file.h"
+#include "../include/list.h"
 //////////////////////////////////////
               //宏定义
 /////////////////////////////////////
@@ -12,7 +13,7 @@
 #define MAX_CMD 256
 #define FAIL_MEM "分配内存失败\n"
 #define MAX_ARG 5
-#define command_count 4
+#define command_count 5
 //////////////////////////////////////
               //结构体
 //////////////////////////////////////
@@ -25,8 +26,9 @@ struct command {
 static struct command Command_list[] = {
   {"q",     0, "退出程序", },
   {"?",     1, "获取帮助(数据结构指令为类型)"},
-  {"list",  2, "链表操作"},
-  {"t",     3, "测试测试"}
+  {"list",  5, "链表操作"},
+  {"t",     3, "测试测试"},
+  {"sb",     1, "小彩蛋"}
 };
 
 
@@ -38,6 +40,9 @@ static struct command Command_list[] = {
 
 //打印介绍
 int intro();
+
+//查询指令
+bool command_valid(char *cmd);
 
 //执行指令
 void command();
@@ -111,6 +116,10 @@ void command() {
     if (cmd == NULL) {
       continue;
     }
+    if (!command_valid(cmd)) {
+      printf("无效指令 请输入 ? 获取帮助\n");
+      continue;
+    }
     int cmd_index = get_command_index(cmd);
     int argc = 0;
     for (int i = 0; i < Command_list[cmd_index].max_arg; i++) {
@@ -141,6 +150,13 @@ void run_command(int argc, char *arg[], char *cmd) {
     help(argc, arg);
     return;
   }
+  if (strcmp(cmd, "sb") == 0) {
+    printf("你是在找Mewscat AKA 缪级霸猫吗?\n");
+    return;
+  }
+  if (strcmp(cmd, "list") == 0) {
+    list_main(argc, arg);
+  }
 }
 
 void help(int argc, char *arg[]) {
@@ -150,12 +166,10 @@ void help(int argc, char *arg[]) {
   }
 
   if (strcmp(arg[0], "list") == 0) {
-    if(arg[1] == NULL) {
-      print_file("src/textfile/help_list_general.txt");
-      return;
-    }
-
+    print_file("src/textfile/help_list_general.txt");
+    return;
   }
+  printf("无效参数或数量 请输入 ? 查询帮助\n");
 }
  
 int get_command_index(char *cmd) {
@@ -168,4 +182,14 @@ int get_command_index(char *cmd) {
     index++;
   }
   return index;
+}
+
+bool command_valid(char *cmd) {
+  bool result = false;
+  for (int i = 0; i < command_count; i++) {
+    if (strcmp(cmd, Command_list[i].cmd) == 0) {
+      result = true;
+    }
+  }
+  return result;
 }
