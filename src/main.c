@@ -19,16 +19,14 @@
 struct command {
   char *cmd;
   int max_arg;
-  char *arg_example;
   char *help_msg;
-  bool strict_args;
 };
 
 static struct command Command_list[] = {
-  {"q",     0, "{N/A}",               "退出程序", },
-  {"?",     2, "{类型} {进阶}",       "获取帮助(数据结构指令为类型)"},
-  {"list",  2, "{行动} {值}",         "链表操作"},
-  {"t",     3, "{N/A} {N/A} {N/A}",   "测试测试"}
+  {"q",     0, "退出程序", },
+  {"?",     1, "获取帮助(数据结构指令为类型)"},
+  {"list",  2, "链表操作"},
+  {"t",     3, "测试测试"}
 };
 
 
@@ -150,11 +148,16 @@ void help(int argc, char *arg[]) {
     print_file("src/textfile/help_command.txt");
     return;
   }
+
   if (strcmp(arg[0], "list") == 0) {
-    
+    if(arg[1] == NULL) {
+      print_file("src/textfile/help_list_general.txt");
+      return;
+    }
+
   }
 }
-
+ 
 int get_command_index(char *cmd) {
   size_t command_list_length = sizeof(Command_list) / sizeof(Command_list[0]);
   int index = 0;
