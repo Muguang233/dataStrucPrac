@@ -54,10 +54,10 @@ int get_command_index();
 void test_arg(int argc, char *arg[]);
 
 //执行指令
-void run_command(int argc, char *arg[], char *cmd);
+void run_command(char *cmd);
 
 //帮助指令
-void help(int argc, char *arg[]);
+void help();
 
 
 //////////////////////////////////////
@@ -128,10 +128,11 @@ void command() {
     while ((args[argc] = strtok(NULL, " ")) != NULL && argc < Command_list[cmd_index].max_arg) {
       argc++;
     }
-    if(argc > Command_list[cmd_index].max_arg) {
+    if(args[0] != NULL) {
+      printf("无效输入 请避免多余参数\n");
       continue;
     }
-    run_command(argc, args, cmd);
+    run_command(cmd);
   }
 }
 
@@ -141,13 +142,13 @@ void test_arg(int argc, char *arg[]) {
   }
 }
 
-void run_command(int argc, char *arg[], char *cmd) {
+void run_command(char *cmd) {
   if (strcmp(cmd, "q") == 0) {
     printf("感谢游玩\n");
     exit(1);
   }
   if (strcmp(cmd, "?") == 0) {
-    help(argc, arg);
+    help();
     return;
   }
   if (strcmp(cmd, "sb") == 0) {
@@ -155,21 +156,12 @@ void run_command(int argc, char *arg[], char *cmd) {
     return;
   }
   if (strcmp(cmd, "list") == 0) {
-    list_main(argc, arg);
+    list_main();
   }
 }
 
-void help(int argc, char *arg[]) {
-  if (arg[0] == NULL) {
-    print_file("src/textfile/help_command.txt");
-    return;
-  }
-
-  if (strcmp(arg[0], "list") == 0) {
-    print_file("src/textfile/help_list_general.txt");
-    return;
-  }
-  printf("无效参数或数量 请输入 ? 查询帮助\n");
+void help() {
+  print_file("src/textfile/help_command.txt");
 }
  
 int get_command_index(char *cmd) {

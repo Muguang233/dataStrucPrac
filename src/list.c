@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "../include/list.h"
 
@@ -25,75 +26,105 @@ void print_list(struct node *head);
 static struct list **list_library = NULL;
 static int list_count = 0;
 
-void list_main(int argc, char *arg[]) {
-  if (arg[0] == NULL) {
-    printf("未找到命令\n");
+void list_main() {
+  printf("欢迎来到链表操作模块\n");
+  char input[MAX_INPUT];
+  char *cmd;
+  char *args[MAX_ARG];
+
+  while(true) {
+    printf("|-> ");
+    if (fgets(input, MAX_INPUT, stdin) == NULL) {
+      return;
+    }
+    input[strcspn(input, "\n")] = '\0';
+    if(input[0] == '\0') {
+      continue;
+    }
+    cmd = strtok(input, " ");
+    if (cmd == NULL) {
+      continue;
+    }
+    int argc = 0;
+    for (int i = 0; i < MAX_ARG; i++) {
+      args[i] = NULL;
+    }
+    while ((args[argc] = strtok(NULL, " ")) != NULL && argc < MAX_ARG) {
+      argc++;
+    }
+    if(argc > MAX_ARG) {
+      continue;
+    }
+    if (strcmp(cmd, "c") == 0) {
+      if(args[0] == NULL) {
+        if (newList()) {
+          printf("添加失败\n");
+        }
+        continue;
+      }
+      int num = atoi(args[0]);
+      if (num == 0) {
+        printf("这不是一个有效的数量\n");
+        list_help();
+        continue;
+      }
+      for (int i = 0; i < num; i++) {
+        if (newList()) {
+          printf("添加失败\n");
+          break;
+        }
+      }
+      continue;
+    }
+    if (strcmp(cmd, "p") == 0) {
+      if(args[0] == NULL) {
+          printf("链表数量: %d\n", list_count);
+        for (int i = 0; i < list_count; i++) {
+          printf("链表编号: %d 节点数量: %d\n", list_library[i]->id, list_library[i]->size);
+        }
+        continue;
+      }
+      int id = atoi(args[0]);
+      if (invalid_id(id)) continue;
+      print_list(list_library[id-1]->head);
+      continue;
+    }
+    if (strcmp(cmd, "add") == 0) {
+      if (args[0] == NULL) {
+        printf("缺少链表编号\n");
+        continue;
+      }
+      int id = atoi(args[0]);
+      if (invalid_id(id)) continue;
+      if (args[1] == NULL) {
+        printf("请提供一个值\n");
+        list_help();
+        continue;
+      }
+      int value = atoi(args[1]);
+      if ((value == 0) && strcmp(args[1], "0") != 0) {
+        printf("请提供一个有效的值\n");
+        list_help();
+        continue;
+      }
+      if (append_list(list_library[id-1], value)){
+        printf("添加节点失败");
+      }
+      continue;
+    }
+    printf("命令还未实现，或者不存在\n");
     list_help();
-    return;
   }
+  
+  
 
-  if (strcmp(arg[0], "c") == 0) {
-    if(arg[1] == NULL) {
-      if (newList()) {
-        printf("添加失败\n");
-      }
-      return;
-    }
-    int num = atoi(arg[1]);
-    if (num == 0) {
-      printf("这不是一个有效的数量\n");
-      list_help();
-      return;
-    }
-    for (int i = 0; i < num; i++) {
-      if (newList()) {
-        printf("添加失败\n");
-        break;
-      }
-    }
-    return;
-  }
+  
 
-  if (strcmp(arg[0], "p") == 0) {
-    if(arg[1] == NULL) {
-        printf("链表数量: %d\n", list_count);
-      for (int i = 0; i < list_count; i++) {
-        printf("链表编号: %d 节点数量: %d\n", list_library[i]->id, list_library[i]->size);
-      }
-      return;
-    }
-    int id = atoi(arg[1]);
-    if (invalid_id(id)) return;
-    print_list(list_library[id-1]->head);
-    return;
-  }
+  
 
-  if (strcmp(arg[0], "add") == 0) {
-    if (arg[1] == NULL) {
-      printf("缺少链表编号\n");
-      return;
-    }
-    int id = atoi(arg[1]);
-    if (invalid_id(id)) return;
-    if (arg[2] == NULL) {
-      printf("请提供一个值\n");
-      list_help();
-      return;
-    }
-    int value = atoi(arg[2]);
-    if ((value == 0) && strcmp(arg[2], "0") != 0) {
-      printf("请提供一个有效的值\n");
-      list_help();
-      return;
-    }
-    if (append_list(list_library[id-1], value)){
-      printf("添加节点失败");
-    }
-    return;
-  }
+  
 
-  printf("命令还未实现，或者不存在\n");
-  list_help();
+  
   
 }
 
@@ -163,5 +194,5 @@ void print_list(struct node *head){
 }
 
 void list_help() {
-  printf("请输入 ? list 查看帮助\n");
+  printf("请输入 ? 查看帮助\n");
 }
