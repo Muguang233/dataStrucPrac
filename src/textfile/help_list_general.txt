@@ -6,4 +6,4 @@
 5.    e/exit        退出链表模块              exit
 6.    q/quit        退出程序                  q
 7.    ?             链表模块指南              ?
-8.    d/delete
+8.    d/delete      删除(指定值/位置/尾部)     d/delete {-e|-p|-v} (尾部/位置/值) {N/A | position | value}

@@ -189,6 +189,33 @@ void list_main() {
       continue;
     }
 
+    //删除节点 (指定值/指定位置/尾部)
+    if (strcmp(cmd, "d") == 0 || strcmp(cmd, "delete") == 0) {
+      if(args[0] == NULL) {
+        printf("缺少参数选项\n");
+        continue;
+      }
+      if(strcmp(args[0], "-e") != 0 || args[1] == NULL) {
+        printf("缺少参数所需的值\n");
+        continue;
+      }
+      if(strcmp(args[0], "-e") == 0) {
+        printf("执行尾部\n");
+        continue;
+      }
+      if(strcmp(args[0], "-p") == 0) {
+        printf("执行位置\n");
+        continue;
+      }
+      if(strcmp(args[0], "-v") == 0) {
+        printf("执行指定值\n");
+        continue;
+      }
+      
+
+      continue;
+    }
+
 
 
     printf("命令还未实现，或者不存在\n");
