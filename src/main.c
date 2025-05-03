@@ -144,6 +144,7 @@ void test_arg(int argc, char *arg[]) {
 
 void run_command(char *cmd) {
   if (strcmp(cmd, "q") == 0) {
+    free_list();
     printf("感谢游玩\n");
     exit(1);
   }

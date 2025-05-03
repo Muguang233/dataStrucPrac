@@ -36,6 +36,8 @@ void list_main() {
   char *args[MAX_ARG];
 
   while(true) {
+
+    //处理指令和参数
     printf("|-> ");
     if (fgets(input, MAX_INPUT, stdin) == NULL) {
       return;
@@ -59,6 +61,7 @@ void list_main() {
       continue;
     }
 
+    //创建链表 指令为 c / create
     if (strcmp(cmd, "c") == 0 || strcmp(cmd, "create") == 0) {
       if(args[0] == NULL) {
         if (newList()) {
@@ -84,6 +87,7 @@ void list_main() {
       continue;
     }
 
+    //打印链表 指令为 p / print
     if (strcmp(cmd, "p") == 0 || strcmp(cmd, "print") == 0) {
       if(args[0] == NULL) {
           printf("链表数量: %d\n", list_count);
@@ -98,6 +102,8 @@ void list_main() {
       continue;
     }
 
+
+    //指定链表添加新节点 a / add
     if (strcmp(cmd, "add") == 0 || strcmp(cmd, "a") == 0) {
       if (args[0] == NULL) {
         printf("缺少链表编号\n");
@@ -124,21 +130,26 @@ void list_main() {
       continue;
     }
 
+    //退出程序指令 (未处理内存释放)
     if (strcmp(cmd, "q") == 0 || strcmp(cmd, "quit") == 0) {
+      free_list();
       printf("感谢游玩\n");
       exit(1);
     }
 
+    //退出当前操作模块
     if (strcmp(cmd, "exit") == 0 || strcmp(cmd, "e") == 0) {
       printf("退出链表操作模块\n");
       break;
     }
 
+    //帮助指令
     if (strcmp(cmd, "?") == 0) {
       print_file("src/textfile/help_list_general.txt");
       continue;
     }
 
+    //指定位置插入元素
     if (strcmp(cmd, "i") == 0 || strcmp(cmd, "insert") == 0) {
       if (args[0] == NULL) {
         printf("缺少链表编号\n");
@@ -176,6 +187,8 @@ void list_main() {
       printf("插入元素成功\n");
       continue;
     }
+
+
 
     printf("命令还未实现，或者不存在\n");
     list_help();
@@ -291,4 +304,17 @@ struct node *newNode(int value) {
   new->value = value;
   new->next = NULL;
   return new;
+}
+
+void free_list() {
+  for(int i = 0; i < list_count; i++) {
+    struct node *curr = list_library[i]->head;
+    while(curr != NULL) {
+      struct node *temp = curr->next;
+      free(curr);
+      curr = temp;
+    }
+    free(list_library[i]);
+  }
+  free(list_library);
 }

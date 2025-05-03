@@ -7,4 +7,6 @@ typedef struct list *List;
 
 void list_main();
 
+void free_list();
+
 #endif
