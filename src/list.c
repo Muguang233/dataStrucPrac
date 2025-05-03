@@ -9,6 +9,7 @@
 struct node {
   int value;
   struct node *next;
+  struct node *prev;
 };
 
 struct list {
@@ -254,6 +255,7 @@ int append_list(List list, int value) {
     curr = curr->next;
   }
   curr->next = new;
+  new->prev = curr;
   list->tail = new;
   list->size++;
   return 0;
@@ -264,6 +266,7 @@ int insert_nth_list(List list, int position, int value) {
   if (new == NULL) return 1;
 
   if (position == 0) {
+    if(list->head != NULL) list->head->prev = new;
     new->next = list->head;
     list->head = new;
     if (list->size == 0) {
@@ -271,6 +274,7 @@ int insert_nth_list(List list, int position, int value) {
     }
   } else if (position >= list->size) {
     list->tail->next = new;
+    new->prev = list->tail;
     list->tail = new;
   } else {
     struct node *curr = list->head;
@@ -278,6 +282,8 @@ int insert_nth_list(List list, int position, int value) {
       curr = curr->next;
     }
     new->next = curr->next;
+    new->prev = curr;
+    curr->next->prev = new;
     curr->next = new;
   }
 
@@ -303,6 +309,7 @@ struct node *newNode(int value) {
   struct node *new = malloc(sizeof(struct node));
   new->value = value;
   new->next = NULL;
+  new->prev = NULL;
   return new;
 }
 
