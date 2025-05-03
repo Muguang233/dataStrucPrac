@@ -59,7 +59,7 @@ void list_main() {
       continue;
     }
 
-    if (strcmp(cmd, "c") == 0) {
+    if (strcmp(cmd, "c") == 0 || strcmp(cmd, "create") == 0) {
       if(args[0] == NULL) {
         if (newList()) {
           printf("添加失败\n");
@@ -84,7 +84,7 @@ void list_main() {
       continue;
     }
 
-    if (strcmp(cmd, "p") == 0) {
+    if (strcmp(cmd, "p") == 0 || strcmp(cmd, "print") == 0) {
       if(args[0] == NULL) {
           printf("链表数量: %d\n", list_count);
         for (int i = 0; i < list_count; i++) {
@@ -98,7 +98,7 @@ void list_main() {
       continue;
     }
 
-    if (strcmp(cmd, "add") == 0) {
+    if (strcmp(cmd, "add") == 0 || strcmp(cmd, "a") == 0) {
       if (args[0] == NULL) {
         printf("缺少链表编号\n");
         continue;
@@ -124,12 +124,12 @@ void list_main() {
       continue;
     }
 
-    if (strcmp(cmd, "q") == 0) {
+    if (strcmp(cmd, "q") == 0 || strcmp(cmd, "quit") == 0) {
       printf("感谢游玩\n");
       exit(1);
     }
 
-    if (strcmp(cmd, "exit") == 0) {
+    if (strcmp(cmd, "exit") == 0 || strcmp(cmd, "e") == 0) {
       printf("退出链表操作模块\n");
       break;
     }
@@ -139,7 +139,7 @@ void list_main() {
       continue;
     }
 
-    if (strcmp(cmd, "i") == 0) {
+    if (strcmp(cmd, "i") == 0 || strcmp(cmd, "insert") == 0) {
       if (args[0] == NULL) {
         printf("缺少链表编号\n");
         continue;
