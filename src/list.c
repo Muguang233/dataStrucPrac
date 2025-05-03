@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "../include/list.h"
+#include "../include/file.h"
 
 struct node {
   int value;
@@ -22,6 +23,8 @@ void list_help();
 int invalid_id(int id);
 int append_list(List list, int value);
 void print_list(struct node *head);
+int insert_nth_list(List list, int position, int value);
+struct node *newNode(int value);
 
 static struct list **list_library = NULL;
 static int list_count = 0;
@@ -55,11 +58,14 @@ void list_main() {
     if(argc > MAX_ARG) {
       continue;
     }
+
     if (strcmp(cmd, "c") == 0) {
       if(args[0] == NULL) {
         if (newList()) {
           printf("添加失败\n");
+          continue;
         }
+        printf("添加成功\n");
         continue;
       }
       int num = atoi(args[0]);
@@ -74,8 +80,10 @@ void list_main() {
           break;
         }
       }
+      printf("成功添加%d个链表\n", num);
       continue;
     }
+
     if (strcmp(cmd, "p") == 0) {
       if(args[0] == NULL) {
           printf("链表数量: %d\n", list_count);
@@ -89,6 +97,7 @@ void list_main() {
       print_list(list_library[id-1]->head);
       continue;
     }
+
     if (strcmp(cmd, "add") == 0) {
       if (args[0] == NULL) {
         printf("缺少链表编号\n");
@@ -109,9 +118,65 @@ void list_main() {
       }
       if (append_list(list_library[id-1], value)){
         printf("添加节点失败");
+        continue;
       }
+      printf("添加新节点成功\n");
       continue;
     }
+
+    if (strcmp(cmd, "q") == 0) {
+      printf("感谢游玩\n");
+      exit(1);
+    }
+
+    if (strcmp(cmd, "exit") == 0) {
+      printf("退出链表操作模块\n");
+      break;
+    }
+
+    if (strcmp(cmd, "?") == 0) {
+      print_file("src/textfile/help_list_general.txt");
+      continue;
+    }
+
+    if (strcmp(cmd, "i") == 0) {
+      if (args[0] == NULL) {
+        printf("缺少链表编号\n");
+        continue;
+      }
+      int id = atoi(args[0]);
+      if (invalid_id(id)) continue;
+      if (args[1] == NULL) {
+        printf("缺少位置\n");
+        continue;
+      }
+      int position = atoi(args[1]);
+      if (
+        (position == 0 && strcmp(args[1], "0") != 0) ||
+        position < 0
+        ) {
+        printf("请提供一个有效的位置\n");
+        list_help();
+        continue;
+      }
+      if (args[2] == NULL) {
+        printf("缺少值\n");
+        continue;
+      }
+      int value = atoi(args[2]);
+      if (value == 0 && strcmp(args[2], "0") != 0) {
+        printf("请提供一个有效的值\n");
+        list_help();
+        continue;
+      }
+      if (insert_nth_list(list_library[id-1], position, value)) {
+        printf("插入元素失败\n");
+        continue;
+      }
+      printf("插入元素成功\n");
+      continue;
+    }
+
     printf("命令还未实现，或者不存在\n");
     list_help();
   }
@@ -152,24 +217,22 @@ int invalid_id(int id) {
   if (id == 0) {
     printf("这不是一个编号\n");
     return 1;
-  } else if (id > list_count) {
+  } else if (id > list_count || id < 0) {
     printf("这是一个无效编号\n");
     return 1;
-  }
+  } 
   return 0;
 }
 
 int append_list(List list, int value) {
-  struct node *newNode = malloc(sizeof(struct node));
-  if (newNode == NULL) {
+  struct node *new = newNode(value);
+  if (new == NULL) {
     printf("分配新节点失败\n");
     return 1;
   }
-  newNode->next = NULL;
-  newNode->value = value;
   if (list->head == NULL) {
-    list->head = newNode;
-    list->tail = newNode;
+    list->head = new;
+    list->tail = new;
     list->size++;
     return 0;
   }
@@ -177,8 +240,34 @@ int append_list(List list, int value) {
   while(curr->next != NULL) {
     curr = curr->next;
   }
-  curr->next = newNode;
-  list->tail = newNode;
+  curr->next = new;
+  list->tail = new;
+  list->size++;
+  return 0;
+}
+
+int insert_nth_list(List list, int position, int value) {
+  struct node *new = newNode(value);
+  if (new == NULL) return 1;
+
+  if (position == 0) {
+    new->next = list->head;
+    list->head = new;
+    if (list->size == 0) {
+      list->tail = new;
+    }
+  } else if (position >= list->size) {
+    list->tail->next = new;
+    list->tail = new;
+  } else {
+    struct node *curr = list->head;
+    for (int i = 0; i < position - 1; i++) {
+      curr = curr->next;
+    }
+    new->next = curr->next;
+    curr->next = new;
+  }
+
   list->size++;
   return 0;
 }
@@ -195,4 +284,11 @@ void print_list(struct node *head){
 
 void list_help() {
   printf("请输入 ? 查看帮助\n");
+}
+
+struct node *newNode(int value) {
+  struct node *new = malloc(sizeof(struct node));
+  new->value = value;
+  new->next = NULL;
+  return new;
 }
