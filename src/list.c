@@ -25,7 +25,10 @@ int invalid_id(int id);
 int append_list(List list, int value);
 void print_list(struct node *head);
 int insert_nth_list(List list, int position, int value);
+struct node *listDeleteRecursion(struct node *node, int value);
+void listDeleteValue(struct list *list, int value);
 struct node *newNode(int value);
+int valid_atoi(int val, char *str);
 
 static struct list **list_library = NULL;
 static int list_count = 0;
@@ -195,8 +198,12 @@ void list_main() {
         printf("缺少参数选项\n");
         continue;
       }
-      if(strcmp(args[0], "-e") != 0 || args[1] == NULL) {
+      if(strcmp(args[0], "-e") != 0 && (args[1] == NULL && args[2] == NULL) ) {
         printf("缺少参数所需的值\n");
+        continue;
+      }
+      if(strcmp(args[0], "-e") == 0 && args[1] != NULL) {
+        printf("多余参数\n");
         continue;
       }
       if(strcmp(args[0], "-e") == 0) {
@@ -208,7 +215,11 @@ void list_main() {
         continue;
       }
       if(strcmp(args[0], "-v") == 0) {
-        printf("执行指定值\n");
+        int id = atoi(args[1]);
+        if(invalid_id(id)) continue;
+        int value = atoi(args[2]);
+        if(valid_atoi(value, args[2]))continue;
+        listDeleteValue(list_library[id-1], value);
         continue;
       }
       
@@ -351,4 +362,48 @@ void free_list() {
     free(list_library[i]);
   }
   free(list_library);
+}
+
+void listDeleteValue(struct list *list, int value) {
+  if(list->head->value == value) {
+    struct node *tmp = list->head->next;
+    tmp->prev = NULL;
+    free(list->head);
+    list->head = tmp;
+    printf("成功删除节点\n");
+    return;
+  }
+  if(list->tail->value == value) {
+    struct node *tmp = list->tail->prev;
+    tmp->next = NULL;
+    free(list->tail);
+    list->tail = tmp;
+    printf("成功删除节点\n");
+    return;
+  }
+  list->head = listDeleteRecursion(list->head, value);
+  return;
+}
+
+struct node *listDeleteRecursion(struct node *node, int value) {
+  if(node == NULL) {
+    printf("无法找到指定的值\n");
+    return NULL;
+  }
+  if(node->value == value) {
+    struct node *tmp = node->next;
+    printf("成功删除节点\n");
+    free(node);
+    return tmp;
+  }
+  node->next = listDeleteRecursion(node->next, value);
+  return node;
+}
+
+int valid_atoi(int val, char *str) {
+  if(val == 0 && strcmp(str, "0") != 0) {
+    printf("这是一个无效的值");
+    return true;
+  }
+  return false;
 }
